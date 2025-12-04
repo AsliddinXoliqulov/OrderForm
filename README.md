@@ -34,6 +34,36 @@ npm run dev
 
 Loyiha `http://localhost:5173` da ochiladi.
 
+### Vite ishga tushganini tekshirish:
+
+1. **Browser Console da:**
+   - `npm run dev` ni ishga tushirgandan keyin
+   - Browser → DevTools → Console
+   - Quyidagi xabarlarni ko'rasiz:
+     ```
+     ✅ Vite Development mode ishga tushdi!
+     🔧 Vite version: development
+     🌐 API Base URL: ...
+     ```
+
+2. **Terminal da:**
+   - `npm run dev` ni ishga tushirganda:
+     ```
+     VITE v5.x.x  ready in xxx ms
+     ➜  Local:   http://localhost:5173/
+     ➜  Network: use --host to expose
+     ```
+
+3. **Build tekshirish:**
+   ```bash
+   npm run build
+   ```
+   - Agar muvaffaqiyatli bo'lsa:
+     ```
+     ✓ built in x.xxs
+     dist/ papkasi yaratiladi
+     ```
+
 ## Build qilish
 
 ```bash
