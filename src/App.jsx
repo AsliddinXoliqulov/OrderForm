@@ -95,11 +95,13 @@ function App() {
           return [];
         }
         
+        // Agar backend to'g'ridan-to'g'ri massiv yuborsa
         if (Array.isArray(data)) {
           console.log('Array formatida:', data.length, 'ta element');
           return data;
         }
         
+        // Kutilgan umumiy formatlar (results, data)
         if (data.results && Array.isArray(data.results)) {
           console.log('results formatida:', data.results.length, 'ta element');
           return data.results;
@@ -109,15 +111,30 @@ function App() {
           console.log('data formatida:', data.data.length, 'ta element');
           return data.data;
         }
-        
+
+        // Ba'zi endpointlar { something: [ ... ] } formatida bo'lishi mumkin
         if (typeof data === 'object') {
-          // Agar object bo'lsa, uni arrayga aylantirish
-          const values = Object.values(data).filter(item => item && typeof item === 'object');
-          console.log('Object formatida:', values.length, 'ta element');
-          return values;
+          const arrayValues = Object.values(data).filter(
+            (item) => Array.isArray(item) && item.length > 0
+          );
+
+          if (arrayValues.length > 0) {
+            console.log('Object ichida massiv topildi:', arrayValues[0].length, 'ta element');
+            return arrayValues[0];
+          }
+
+          // Agar massiv bo'lmasa, lekin objectlar bo'lsa – ularni massivga aylantiramiz
+          const objectValues = Object.values(data).filter(
+            (item) => item && typeof item === 'object'
+          );
+          if (objectValues.length > 0) {
+            console.log('Object formatida:', objectValues.length, 'ta element');
+            return objectValues;
+          }
         }
         
-        console.warn('Noma\'lum format:', typeof data);
+        // Agar yuqoridagilarga tushmasa, ma'lumotni JSON sifatida console ga chiqaramiz
+        console.warn('Noma\'lum format:', typeof data, data);
         return [];
       };
 
@@ -305,7 +322,8 @@ function App() {
         <h1 className="text-2xl font-bold text-gray-800 mb-6 text-center">
           Mobil Buyurtma Shakli
           {/* <h2>token</h2> */}
-          <p className="text-sm text-gray-500">af1874616430e04cfd4bce30035789907e899fc7c3a1a4bb27254828ff304a77
+          <p className="text-sm text-gray-500">
+            af1874616430e04cfd4bce30035789907e899fc7c3a1a4bb27254828ff304a77
           </p>
         </h1>
 
