@@ -177,11 +177,11 @@ function App() {
 
       // Agar barcha ma'lumotlar bo'sh bo'lsa, xabar ko'rsatish
       if (warehouses.length === 0 && payboxes.length === 0 && organizations.length === 0 && priceTypes.length === 0) {
-        alert('Ma\'lumotlar yuklanmadi. Iltimos, tokenni tekshiring va qayta urinib ko\'ring.');
+        alert('«Не удалось загрузить данные. Проверьте токен и повторите попытку».');
       }
     } catch (error) {
       console.error('❌ Ma\'lumotlarni yuklashda umumiy xatolik:', error);
-      alert('Ma\'lumotlarni yuklashda xatolik yuz berdi. Iltimos, tokenni tekshiring.');
+      alert('«Не удалось загрузить данные. Проверьте токен и повторите попытку».');
     } finally {
       setIsLoadingWarehouses(false);
       setIsLoadingPayboxes(false);
@@ -219,12 +219,12 @@ function App() {
   // Savdo yaratish
   const handleCreateSale = async (post = false) => {
     if (!token) {
-      alert('Token kiritilmagan!');
+      alert('Токен не введен!');
       return;
     }
 
     if (!selectedContragent) {
-      alert('Mijoz tanlang!');
+      alert('Выберите клиента!');
       return;
     }
 
@@ -234,17 +234,17 @@ function App() {
     }
 
     if (!selectedPaybox) {
-      alert('Hisob tanlang!');
+      alert('Выберите склад!');
       return;
     }
 
     if (!selectedOrganization) {
-      alert('Tashkilot tanlang!');
+      alert('Выберите организацию!');
       return;
     }
 
     if (products.length === 0) {
-      alert('Kamida bitta mahsulot tanlang!');
+      alert('Выберите хотя бы один продукт!');
       return;
     }
 
@@ -289,7 +289,7 @@ function App() {
       }
 
       const result = await createSale(token, saleData);
-      alert(post ? 'Savdo muvaffaqiyatli yaratildi va to\'ldirildi!' : 'Savdo muvaffaqiyatli yaratildi!');
+      alert(post ? 'Продажа успешно создана и завершена!' : 'Торговля успешно создана!');
       console.log('Savdo natijasi:', result);
       
       // Formani tozalash
@@ -302,7 +302,7 @@ function App() {
     } catch (error) {
       console.error('Savdo yaratishda xatolik:', error);
       const errorMessage = error.response?.data?.message || error.message || 'Savdo yaratishda xatolik yuz berdi';
-      alert(`Xatolik: ${errorMessage}. Iltimos, qayta urinib ko'ring.`);
+      alert(`Ошибка: ${errorMessage}. Пожалуйста, попробуйте еще раз.`);
     } finally {
       setIsCreatingSale(false);
     }
@@ -320,7 +320,7 @@ function App() {
     <div className="min-h-screen bg-gray-100 py-8 px-4">
       <div className="max-w-2xl mx-auto">
         <h1 className="text-2xl font-bold text-gray-800 mb-6 text-center">
-          Mobil Buyurtma Shakli
+        Мобильная форма заказа
           {/* <h2>token</h2> */}
           <p className="text-sm text-gray-500">
             af1874616430e04cfd4bce30035789907e899fc7c3a1a4bb27254828ff304a77
@@ -382,6 +382,8 @@ function App() {
               onProductRemove={handleProductRemove}
               onQuantityChange={handleQuantityChange}
               onDiscountChange={handleDiscountChange}
+              selectedWarehouse={selectedWarehouse}
+              selectedPriceType={selectedPriceType}
             />
 
             {/* Jami ma'lumotlar */}

@@ -9,12 +9,14 @@ const PhoneSearch = ({ token, selectedContragent, onContragentSelect }) => {
 
   useEffect(() => {
     const searchTimer = setTimeout(() => {
-      if (phone.trim().length >= 3 && token) {
+      // Input focus bo'lganda yoki birinchi belgi kiritilganda darhol qidiruvni boshlash
+      if (phone.trim().length >= 1 && token) {
         handleSearch();
-      } else {
+      } else if (phone.trim().length === 0) {
+        // Bo'sh input bo'lsa, ro'yxatni tozalash
         setContragents([]);
       }
-    }, 500);
+    }, 300); // Debounce vaqtini 300ms ga kamaytirdik - tezroq javob
 
     return () => clearTimeout(searchTimer);
   }, [phone, token]);
@@ -38,7 +40,29 @@ const PhoneSearch = ({ token, selectedContragent, onContragentSelect }) => {
     setIsSearching(true);
     try {
       const data = await searchContragents(token, phone);
-      setContragents(Array.isArray(data) ? data : (data.results || data.data || []));
+
+      console.log('📞 searchContragents javobi:', data);
+
+      // Turli formatlarni qo'llab-quvvatlash uchun parse
+      let parsed = [];
+
+      if (Array.isArray(data)) {
+        parsed = data;
+      } else if (data?.results && Array.isArray(data.results)) {
+        parsed = data.results;
+      } else if (data?.data && Array.isArray(data.data)) {
+        parsed = data.data;
+      } else if (data && typeof data === 'object') {
+        const arrayValues = Object.values(data).find(
+          (v) => Array.isArray(v) && v.length > 0
+        );
+        if (arrayValues) {
+          parsed = arrayValues;
+        }
+      }
+
+      console.log('📞 Parsed contragents:', parsed);
+      setContragents(parsed);
     } catch (error) {
       console.error('Qidiruv xatosi:', error);
       setContragents([]);
@@ -48,6 +72,7 @@ const PhoneSearch = ({ token, selectedContragent, onContragentSelect }) => {
   };
 
   const handleSelect = (contragent) => {
+    console.log('✅ Tanlangan mijoz:', contragent);
     setContragents([]);
     setPhone('');
     onContragentSelect(contragent);
@@ -63,7 +88,14 @@ const PhoneSearch = ({ token, selectedContragent, onContragentSelect }) => {
           type="text"
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
-          placeholder="Введите номер телефона"
+          onFocus={() => {
+            // Input focus bo'lganda, agar telefon raqami bo'lsa, darhol qidiruvni boshlash
+            if (phone.trim().length >= 1 && token) {
+              handleSearch();
+            }
+          }}
+          placeholder="Номер телефона + 1 символ, затем поиск
+"
           className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         />
         {isSearching && (
@@ -75,12 +107,19 @@ const PhoneSearch = ({ token, selectedContragent, onContragentSelect }) => {
           <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto">
             {contragents.map((contragent, index) => (
               <button
-                key={contragent.id || index}
+                key={contragent.id || contragent.value || index}
                 type="button"
                 onClick={() => handleSelect(contragent)}
                 className="w-full px-4 py-2 text-left hover:bg-gray-100 focus:bg-gray-100 focus:outline-none"
               >
-                <div className="font-medium">{contragent.name || contragent.title}</div>
+                <div className="font-medium">
+                  {contragent.name ||
+                    contragent.title ||
+                    contragent.work_name ||
+                    contragent.full_name ||
+                    contragent.short_name ||
+                    'Mijoz'}
+                </div>
                 {contragent.phone && (
                   <div className="text-sm text-gray-500">{contragent.phone}</div>
                 )}
@@ -92,7 +131,13 @@ const PhoneSearch = ({ token, selectedContragent, onContragentSelect }) => {
       {selectedContragent && (
         <div className="mt-2 p-2 bg-green-50 border border-green-200 rounded-md">
           <p className="text-sm text-green-800">
-            Tanlangan: {selectedContragent.name || selectedContragent.title || 'Mijoz'}
+            Tanlangan:{' '}
+            {selectedContragent.name ||
+              selectedContragent.title ||
+              selectedContragent.work_name ||
+              selectedContragent.full_name ||
+              selectedContragent.short_name ||
+              'Mijoz'}
           </p>
         </div>
       )}
@@ -101,4 +146,4 @@ const PhoneSearch = ({ token, selectedContragent, onContragentSelect }) => {
 };
 
 export default PhoneSearch;
-
+ 

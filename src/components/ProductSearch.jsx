@@ -1,7 +1,16 @@
 import { useState, useEffect, useRef } from 'react';
 import { searchNomenclature } from '../services/api';
 
-const ProductSearch = ({ token, selectedProducts = [], onProductSelect, onProductRemove, onQuantityChange, onDiscountChange }) => {
+const ProductSearch = ({ 
+  token, 
+  selectedProducts = [], 
+  onProductSelect, 
+  onProductRemove, 
+  onQuantityChange, 
+  onDiscountChange,
+  selectedWarehouse = null,
+  selectedPriceType = null
+}) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
@@ -17,7 +26,7 @@ const ProductSearch = ({ token, selectedProducts = [], onProductSelect, onProduc
     }, 500);
 
     return () => clearTimeout(searchTimer);
-  }, [searchTerm, token]);
+  }, [searchTerm, token, selectedWarehouse, selectedPriceType]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -37,7 +46,15 @@ const ProductSearch = ({ token, selectedProducts = [], onProductSelect, onProduc
     
     setIsSearching(true);
     try {
-      const data = await searchNomenclature(token, searchTerm);
+      const options = {};
+      if (selectedWarehouse) {
+        options.warehouse = selectedWarehouse.id || selectedWarehouse.value;
+      }
+      if (selectedPriceType) {
+        options.price_type = selectedPriceType.id || selectedPriceType.value;
+      }
+      
+      const data = await searchNomenclature(token, searchTerm, options);
       setSearchResults(Array.isArray(data) ? data : (data.results || data.data || []));
     } catch (error) {
       console.error('Mahsulot qidiruv xatosi:', error);
