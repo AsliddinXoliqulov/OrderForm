@@ -1,16 +1,31 @@
 import axios from 'axios';
 
+// Vercel da environment variable ishlatish
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://app.tablecrm.com/api/v1';
 
+// Debug uchun - production da console.log ishlamaydi, lekin error handling uchun foydali
+if (import.meta.env.DEV) {
+  console.log('🔧 API Base URL:', API_BASE_URL);
+  console.log('🔧 Environment:', import.meta.env.MODE);
+}
+
 export const createApiClient = (token) => {
+  if (!token) {
+    console.error('❌ Token berilmagan!');
+    throw new Error('Token talab qilinadi');
+  }
+
   return axios.create({
     baseURL: API_BASE_URL,
     headers: {
       'Content-Type': 'application/json',
+      'Accept': 'application/json',
     },
     params: {
       token: token,
     },
+    // Vercel da timeout qo'shish
+    timeout: 30000, // 30 soniya
   });
 };
 

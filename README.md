@@ -80,13 +80,24 @@ vercel --prod
    - Install Command: `npm install`
 5. "Deploy" ni bosing
 
-## Environment Variables (Vercel)
+## Environment Variables (Vercel) - MUHIM!
 
-Agar `.env` fayl ishlatilsa, Vercel da Environment Variables qo'shing:
+**Vercel ga deploy qilgandan keyin ma'lumotlar olinmay qolsa, bu sabab bo'lishi mumkin!**
+
+Vercel Dashboard da quyidagi environment variable ni **MUTLAQO** qo'shing:
 
 1. Vercel Dashboard → Project → Settings → Environment Variables
-2. `VITE_API_BASE_URL` qo'shing
-3. Value: `https://app.tablecrm.com/api/v1`
+2. "Add New" tugmasini bosing
+3. Quyidagilarni kiriting:
+   - **Key:** `VITE_API_BASE_URL`
+   - **Value:** `https://app.tablecrm.com/api/v1`
+   - **Environment:** Production, Preview, Development (barchasini tanlang)
+4. "Save" tugmasini bosing
+5. **Redeploy qiling:** Deployments → Eng so'nggi deployment → "..." → "Redeploy"
+
+**Eslatma:** Environment variable qo'shgandan keyin loyihani qayta deploy qilish kerak!
+
+Batafsil ma'lumot uchun `VERCEL_DEPLOYMENT.md` faylini ko'ring.
 
 ## Funksionallik
 
